@@ -4,7 +4,6 @@ import './index.css';
 import '@mantine/core/styles.css';
 import { MantineProvider, createTheme, Button } from '@mantine/core';
 import App from './App.tsx';
-
 const theme = createTheme({
   components: {
     Button: Button.extend({
