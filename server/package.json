@@ -2,12 +2,16 @@
   "name": "avito-clone-api",
   "version": "1.0.0",
   "description": "Simple API for managing items",
+  "type": "module",
   "main": "app.js",
   "scripts": {
     "start": "node app.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
     "body-parser": "^1.20.2"
+  },
+  "devDependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0"
   }
 }

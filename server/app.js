@@ -1,14 +1,16 @@
-const express = require('express');
-const bodyParser = require('body-parser');
+import express from "express";
+import cors from "cors";
+import fs from "fs";
 
 const ItemTypes = {
-  REAL_ESTATE: 'Недвижимость',
-  AUTO: 'Авто',
-  SERVICES: 'Услуги',
+  REAL_ESTATE: "Недвижимость",
+  AUTO: "Авто",
+  SERVICES: "Услуги",
 };
 
 const app = express();
-app.use(bodyParser.json());
+app.use(cors());
+app.use(express.json());
 
 // In-memory хранилище для объявлений
 let items = [];
@@ -20,13 +22,36 @@ const makeCounter = () => {
 
 const itemsIdCounter = makeCounter();
 
+app.post("/login", (req, res) => {
+  const { email, password } = req.body;
+
+  fs.readFile("../frontend/src/db.json", "utf8", (err, data) => {
+    if (err)
+      return res
+        .status(500)
+        .json({ message: "Ошибка чтения базы пользователей" });
+
+    const users = JSON.parse(data).users;
+    const user = users.find(
+      (u) => u.email === email && u.password === password
+    );
+
+    if (user) {
+      res.json({
+        token: "test123",
+      });
+    } else {
+      res.status(401).json({ message: "Неверный email или пароль" });
+    }
+  });
+});
 // Создание нового объявления
-app.post('/items', (req, res) => {
+app.post("/items", (req, res) => {
   const { name, description, location, type, ...rest } = req.body;
 
   // Validate common required fields
   if (!name || !description || !location || !type) {
-    return res.status(400).json({ error: 'Missing required common fields' });
+    return res.status(400).json({ error: "Missing required common fields" });
   }
 
   switch (type) {
@@ -34,25 +59,25 @@ app.post('/items', (req, res) => {
       if (!rest.propertyType || !rest.area || !rest.rooms || !rest.price) {
         return res
           .status(400)
-          .json({ error: 'Missing required fields for Real estate' });
+          .json({ error: "Missing required fields for Real estate" });
       }
       break;
     case ItemTypes.AUTO:
       if (!rest.brand || !rest.model || !rest.year || !rest.mileage) {
         return res
           .status(400)
-          .json({ error: 'Missing required fields for Auto' });
+          .json({ error: "Missing required fields for Auto" });
       }
       break;
     case ItemTypes.SERVICES:
       if (!rest.serviceType || !rest.experience || !rest.cost) {
         return res
           .status(400)
-          .json({ error: 'Missing required fields for Services' });
+          .json({ error: "Missing required fields for Services" });
       }
       break;
     default:
-      return res.status(400).json({ error: 'Invalid type' });
+      return res.status(400).json({ error: "Invalid type" });
   }
 
   const item = {
@@ -69,39 +94,41 @@ app.post('/items', (req, res) => {
 });
 
 // Получение всех объявлений
-app.get('/items', (req, res) => {
+app.get("/items", (req, res) => {
   res.json(items);
 });
 
 // Получение объявления по его id
-app.get('/items/:id', (req, res) => {
-  const item = items.find(i => i.id === parseInt(req.params.id, 10));
+app.get("/items/:id", (req, res) => {
+  const item = items.find((i) => i.id === parseInt(req.params.id, 10));
   if (item) {
     res.json(item);
   } else {
-    res.status(404).send('Item not found');
+    res.status(404).send("Item not found");
   }
 });
 
 // Обновление объявления по его id
-app.put('/items/:id', (req, res) => {
-  const item = items.find(i => i.id === parseInt(req.params.id, 10));
+app.put("/items/:id", (req, res) => {
+  const item = items.find((i) => i.id === parseInt(req.params.id, 10));
   if (item) {
     Object.assign(item, req.body);
     res.json(item);
   } else {
-    res.status(404).send('Item not found');
+    res.status(404).send("Item not found");
   }
 });
 
 // Удаление объявления по его id
-app.delete('/items/:id', (req, res) => {
-  const itemIndex = items.findIndex(i => i.id === parseInt(req.params.id, 10));
+app.delete("/items/:id", (req, res) => {
+  const itemIndex = items.findIndex(
+    (i) => i.id === parseInt(req.params.id, 10)
+  );
   if (itemIndex !== -1) {
     items.splice(itemIndex, 1);
     res.status(204).send();
   } else {
-    res.status(404).send('Item not found');
+    res.status(404).send("Item not found");
   }
 });
 

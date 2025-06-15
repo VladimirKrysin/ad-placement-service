@@ -1,9 +1,10 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import './index.css';
+import './styles/index.css';
 import '@mantine/core/styles.css';
 import { MantineProvider, createTheme, Button } from '@mantine/core';
-import App from './App.tsx';
+import { App } from './App.tsx';
+
 const theme = createTheme({
   components: {
     Button: Button.extend({

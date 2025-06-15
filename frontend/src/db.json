@@ -1,6 +1,25 @@
 {
-  "posts": [
-    { "id": "1", "title": "a title", "views": 100 },
-    { "id": "2", "title": "another title", "views": 200 }
+  "users": [
+    {
+      "id": 1,
+      "fullName": "Иван Петров",
+      "email": "ivan.petrov@example.com",
+      "password": "securePass123",
+      "avatarUrl": ""
+    },
+    {
+      "id": 2,
+      "fullName": "Анна Сидорова",
+      "email": "anna.sidorova@example.com",
+      "password": "annaSuperPass456",
+      "avatarUrl": ""
+    },
+    {
+      "id": 3,
+      "fullName": "Дмитрий Иванов",
+      "email": "dmitry.ivanov@example.com",
+      "password": "dmitry777!",
+      "avatarUrl": ""
+    }
   ]
 }
