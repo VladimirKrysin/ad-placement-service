@@ -1,6 +1,10 @@
 import express from "express";
 import cors from "cors";
-import fs from "fs";
+import cookieParser from "cookie-parser";
+import mongoose from "mongoose";
+import { userRouter } from "./router/index.js";
+import "dotenv/config";
+// import fs from "fs";
 
 const ItemTypes = {
   REAL_ESTATE: "Недвижимость",
@@ -11,6 +15,24 @@ const ItemTypes = {
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
+app.use("/api", userRouter);
+
+const PORT = process.env.PORT || 3000;
+
+const start = async () => {
+  try {
+    await mongoose.connect(process.env.DB_URL, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+start();
 
 // In-memory хранилище для объявлений
 let items = [];
@@ -22,29 +44,29 @@ const makeCounter = () => {
 
 const itemsIdCounter = makeCounter();
 
-app.post("/login", (req, res) => {
-  const { email, password } = req.body;
+// app.post("/login", (req, res) => {
+//   const { email, password } = req.body;
 
-  fs.readFile("../frontend/src/db.json", "utf8", (err, data) => {
-    if (err)
-      return res
-        .status(500)
-        .json({ message: "Ошибка чтения базы пользователей" });
+//   fs.readFile("../frontend/src/db.json", "utf8", (err, data) => {
+//     if (err)
+//       return res
+//         .status(500)
+//         .json({ message: "Ошибка чтения базы пользователей" });
 
-    const users = JSON.parse(data).users;
-    const user = users.find(
-      (u) => u.email === email && u.password === password
-    );
+//     const users = JSON.parse(data).users;
+//     const user = users.find(
+//       (u) => u.email === email && u.password === password
+//     );
 
-    if (user) {
-      res.json({
-        token: "test123",
-      });
-    } else {
-      res.status(401).json({ message: "Неверный email или пароль" });
-    }
-  });
-});
+//     if (user) {
+//       res.json({
+//         token: "test123",
+//       });
+//     } else {
+//       res.status(401).json({ message: "Неверный email или пароль" });
+//     }
+//   });
+// });
 // Создание нового объявления
 app.post("/items", (req, res) => {
   const { name, description, location, type, ...rest } = req.body;
@@ -130,10 +152,4 @@ app.delete("/items/:id", (req, res) => {
   } else {
     res.status(404).send("Item not found");
   }
-});
-
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
 });
