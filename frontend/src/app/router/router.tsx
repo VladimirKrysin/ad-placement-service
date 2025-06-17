@@ -1,23 +1,18 @@
-import { createBrowserRouter } from 'react-router';
-import { Dashboard } from '../../components/widgets/Dashboard';
-import { Preferences } from '../../components/widgets/Preferences';
-
-function Root() {
-  return <h1>Hello world</h1>;
-}
+import { createBrowserRouter, Navigate } from 'react-router';
+import { LoginForm } from '../../components/widgets/LoginForm/LoginForm';
 
 const router = createBrowserRouter([
   {
+    path: '/login',
+    element: <LoginForm />,
+  },
+  {
     path: '/',
-    Component: Root,
+    element: <Navigate to='/login' replace />, // всё ведёт на /login
   },
   {
-    path: '/dashboard',
-    Component: Dashboard,
-  },
-  {
-    path: '/preferences',
-    Component: Preferences,
+    path: '*',
+    element: <Navigate to='/login' replace />, // несуществующие пути → /login
   },
 ]);
 

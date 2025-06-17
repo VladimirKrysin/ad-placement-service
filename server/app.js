@@ -4,7 +4,6 @@ import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
 import { userRouter } from "./router/index.js";
 import "dotenv/config";
-// import fs from "fs";
 
 const ItemTypes = {
   REAL_ESTATE: "Недвижимость",
@@ -13,7 +12,12 @@ const ItemTypes = {
 };
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 app.use("/api", userRouter);
@@ -44,29 +48,6 @@ const makeCounter = () => {
 
 const itemsIdCounter = makeCounter();
 
-// app.post("/login", (req, res) => {
-//   const { email, password } = req.body;
-
-//   fs.readFile("../frontend/src/db.json", "utf8", (err, data) => {
-//     if (err)
-//       return res
-//         .status(500)
-//         .json({ message: "Ошибка чтения базы пользователей" });
-
-//     const users = JSON.parse(data).users;
-//     const user = users.find(
-//       (u) => u.email === email && u.password === password
-//     );
-
-//     if (user) {
-//       res.json({
-//         token: "test123",
-//       });
-//     } else {
-//       res.status(401).json({ message: "Неверный email или пароль" });
-//     }
-//   });
-// });
 // Создание нового объявления
 app.post("/items", (req, res) => {
   const { name, description, location, type, ...rest } = req.body;
